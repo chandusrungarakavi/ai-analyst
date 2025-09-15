@@ -8,7 +8,7 @@ export async function* streamGemini({
 } = {}) {
   // Send the prompt to the Python backend
   // Call API defined in main.py
-  let response = await fetch("/api/generate", {
+  let response = await fetch("http://127.0.0.1:80/api/generate", {
     method: "POST",
     headers: { "content-type": "application/json" },
     body: JSON.stringify({ model, contents })

@@ -20,7 +20,6 @@ form.onsubmit = async (ev) => {
       {
         role: 'user',
         parts: [
-          { inline_data: { mime_type: 'image/jpeg', data: imageBase64, } },
           { text: promptInput.value }
         ]
       }
