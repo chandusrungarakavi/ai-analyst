@@ -2,11 +2,9 @@ import json
 import os
 
 import google.genai as genai
-from adk_agent.agent import BenchmarkAgent
-agent = BenchmarkAgent()
+from agents.benchmark import benchmark_agent
 from flask import Flask, jsonify, request, send_file, send_from_directory
 from dotenv import load_dotenv
-from flask_cors import CORS
 
 load_dotenv() 
 
@@ -14,7 +12,6 @@ load_dotenv()
 API_KEY = os.environ.get("API_KEY")
 
 app = Flask(__name__)
-CORS(app)  # Enable CORS for all routes
 client = genai.Client(api_key=os.environ.get("API_KEY"))  # Initialize once
 
 @app.route("/api/generate", methods=["POST"])
@@ -41,16 +38,25 @@ def generate_api():
     except Exception as e:
         return jsonify({"error": str(e)})
 
-@app.route("/api/benchmark", methods=["POST"])
-def benchmark_api():
-    try:
-        req_body = request.get_json()
-        startup_name = req_body.get("startup")
-        sector = req_body.get("sector")
-        result = agent.benchmark(startup_name, sector)
-        return jsonify(result)
-    except Exception as e:
-        return jsonify({"error": str(e)})
+# @app.route("/api/benchmark", methods=["POST"])
+# def benchmark_api():
+#     try:
+#         req_body = request.get_json()
+#         startup_name = req_body.get("startup")
+#         sector = req_body.get("sector")
+#         # Use ADK agent's run or benchmark method
+#         # If ADK agent uses .run(), pass the prompt as per SDK docs
+#         try:
+#             # If ADK agent supports .benchmark(), use it
+#             prompt = f"Benchmark the startup '{startup_name}' against sector peers in '{sector}' using financial multiples, hiring data, and traction signals. Return a structured benchmark report."
+#             result = benchmark_agent.run(prompt)
+#         except AttributeError:
+#             # Otherwise, use .run() with a formatted prompt
+#             prompt = f"Benchmark the startup '{startup_name}' against sector peers in '{sector}' using financial multiples, hiring data, and traction signals. Return a structured benchmark report."
+#             result = benchmark_agent.run(prompt)
+#         return jsonify(result)
+#     except Exception as e:
+#         return jsonify({"error": str(e)})
 
 
 @app.route('/<path:path>')
