@@ -4,13 +4,14 @@ import os
 import google.genai as genai
 from flask import Flask, jsonify, request, send_file, send_from_directory
 
-# 🔥🔥 FILL THIS OUT FIRST! 🔥🔥
-# Get your Gemini API key by:
-# - Selecting "Add Gemini API" in the "Firebase Studio" panel in the sidebar
-# - Or by visiting https://g.co/ai/idxGetGeminiKey
-API_KEY = 'TODO'
+# Get your Gemini API key from an environment variable
+API_KEY = os.environ.get("API_KEY")
 
-ai = genai.Client(api_key=API_KEY)
+# Check if the API key is set
+if not API_KEY:
+    raise ValueError("API_KEY environment variable not set. Please get an API key at https://g.co/ai/idxGetGeminiKey and set it as an environment variable.")
+
+genai.configure(api_key=API_KEY)
 app = Flask(__name__)
 
 
@@ -22,16 +23,12 @@ def index():
 @app.route("/api/generate", methods=["POST"])
 def generate_api():
     if request.method == "POST":
-        if API_KEY == 'TODO':
-            return jsonify({ "error": '''
-                To get started, get an API key at
-                https://g.co/ai/idxGetGeminiKey and enter it in
-                main.py
-                '''.replace('\n', '') })
         try:
             req_body = request.get_json()
             contents = req_body.get("contents")
-            response = ai.models.generate_content_stream(model=req_body.get("model"), contents=contents)
+            model = genai.GenerativeModel(req_body.get("model"))
+            response = model.generate_content(contents, stream=True)
+
             def stream():
                 for chunk in response:
                     yield 'data: %s\n\n' % json.dumps({ "text": chunk.text })
