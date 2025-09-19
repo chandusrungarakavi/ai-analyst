@@ -1,0 +1,18 @@
+version: "3.8"
+
+services:
+  ai-analyst-agent:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ai-analyst-agent
+    working_dir: /app
+    volumes:
+      - ./agents:/app/agents:ro
+      - ./req.txt:/app/req.txt:ro
+    ports:
+      - "8000:8000"
+    environment:
+      - PYTHONUNBUFFERED=1
+      - LOG_LEVEL=INFO
+    restart: unless-stopped
