@@ -33,5 +33,6 @@ COPY --from=builder /install /usr/local
 # Copy agent code
 COPY agents/ ./agents/
 
+WORKDIR /app/agents
 # Run agent via ADK CLI
-CMD ["adk", "web", "--host", "0.0.0.0", "agents/root"]
+CMD ["adk", "web", "--host", "0.0.0.0", "agents"]
