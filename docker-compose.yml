@@ -1,18 +1,73 @@
 version: "3.8"
 
 services:
+  # dashboard:
+  #   build:
+  #     context: .
+  #     dockerfile: apps/dashboard/Dockerfile
+  #   container_name: angular-dashboard
+  #   ports:
+  #     - "4200:80"
+  #   depends_on:
+  #     - api-app
+
   ai-analyst-agent:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: agents/Dockerfile
     container_name: ai-analyst-agent
     working_dir: /app
     volumes:
       - ./agents:/app/agents:ro
-      - ./req.txt:/app/req.txt:ro
+      - ./requirements.txt:/app/requirements.txt:ro
     ports:
       - "8000:8000"
     environment:
       - PYTHONUNBUFFERED=1
       - LOG_LEVEL=INFO
     restart: unless-stopped
+
+  api-app:
+    build:
+      context: .
+      dockerfile: api_app/Dockerfile
+    container_name: api-app
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_HOST=db
+      - POSTGRES_PORT=5432
+    ports:
+      - "8001:8000"
+    depends_on:
+      - db
+    volumes:
+      - ./api_app:/app:ro
+
+  db:
+    image: postgres:15
+    container_name: postgres-db
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@admin.com
+      - PGADMIN_DEFAULT_PASSWORD=admin
+    ports:
+      - "5050:80"
+    depends_on:
+      - db
+    restart: unless-stopped
+
+volumes:
+  pgdata:

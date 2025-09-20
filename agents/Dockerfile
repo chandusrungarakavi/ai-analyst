@@ -13,9 +13,9 @@ RUN apk add --no-cache \
     build-base
 
 # Upgrade pip and install dependencies into isolated folder
-COPY req.txt ./
+COPY requirements.txt ./
 RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir --prefix=/install -r req.txt
+    pip install --no-cache-dir --prefix=/install -r requirements.txt
 
 # ---------- Stage 2: Final runtime ----------
 FROM python:3.13-alpine
