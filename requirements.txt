@@ -2,3 +2,5 @@ fastapi
 psycopg2-binary
 uvicorn
 google-adk
+requests>=2.31.0
+pydantic>=2.0.0

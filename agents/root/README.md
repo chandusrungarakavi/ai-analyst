@@ -2,6 +2,10 @@
 
 ## Overview
 
+The AI Analyst system uses a configuration-driven approach with configurations managed by the API service. All agent configurations are stored in the API's `config.json` file and served through a REST endpoint.
+
+## Overview
+
 The AI Analyst system uses a configuration-driven approach to define and create agents. All agent configurations are stored in `config.json`, making it easy to modify agent parameters without changing the code.
 
 ## Configuration File Structure
@@ -32,12 +36,49 @@ The configuration file (`config.json`) contains settings for all agents in the s
 
 ## Modifying Agent Configuration
 
-To modify an agent's behavior:
+Agent configurations can be modified through the API endpoints:
 
-1. Open `config.json`
-2. Locate the agent configuration under the "agents" object
-3. Modify the desired parameters (model, description, instruction)
-4. Save the file - changes will be applied when the system restarts
+### 1. View Current Configuration
+
+```bash
+GET http://localhost:8000/config
+
+Response:
+{
+    "model": "gemini-2.5-flash",
+    "agents": {
+        "benchmark_agent": {
+            "model": "gemini-2.5-flash",
+            "name": "benchmark_agent",
+            "description": "...",
+            "instruction": "..."
+        },
+        ...
+    }
+}
+```
+
+### 2. Update Configuration
+
+```bash
+PUT http://localhost:8000/config
+Content-Type: application/json
+
+# Request Body: Updated configuration object
+{
+    "model": "gemini-2.5-flash",
+    "agents": {
+        ...
+    }
+}
+
+# Response
+{
+    "message": "Configuration updated successfully"
+}
+```
+
+Changes made through the API are immediately reflected in the configuration file and will be picked up by new agent instances.
 
 ## Adding New Agents
 
@@ -57,6 +98,21 @@ The system includes validation for:
 
 ## Notes
 
-- Keep sensitive information out of the configuration file
-- Backup the configuration file before making changes
-- Test changes in a development environment first
+- Keep sensitive information out of the configuration
+- Test configuration changes in a development environment first
+- Always validate configuration JSON before updating
+- Consider using environment variables for the API URL
+- The API endpoint is secured by default - ensure proper authentication in production
+- Backup configurations before making major changes
+
+## Environment Variables
+
+- `API_URL`: The URL of the configuration API (default: "http://localhost:8000")
+
+Example:
+
+```bash
+export API_URL=http://api.example.com
+# or on Windows
+set API_URL=http://api.example.com
+```

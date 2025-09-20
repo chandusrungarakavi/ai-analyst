@@ -1,21 +1,19 @@
-import json
 import os
 from typing import Dict, Any
+import requests
 from google.adk.agents.llm_agent import Agent, LlmAgent
 from google.adk.tools import AgentTool, google_search
 
 
 def load_config() -> Dict[str, Any]:
-    """Load agent configurations from config.json file."""
-    config_path = os.path.join(os.path.dirname(__file__), "config.json")
+    """Load agent configurations from API."""
+    api_url = os.getenv("API_URL", "http://localhost:8000")
     try:
-        with open(config_path, "r") as f:
-            config = json.load(f)
-        return config
-    except FileNotFoundError:
-        raise FileNotFoundError(f"Configuration file not found at {config_path}")
-    except json.JSONDecodeError:
-        raise ValueError("Invalid JSON in configuration file")
+        response = requests.get(f"{api_url}/config")
+        response.raise_for_status()
+        return response.json()
+    except requests.RequestException as e:
+        raise RuntimeError(f"Failed to load configuration from API: {str(e)}")
 
 
 def get_tool_from_name(config: Dict[str, Any], tool_name: str) -> Any:

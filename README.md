@@ -24,11 +24,44 @@
    python main.py
    ```
 
+## API Endpoints
+
+### Configuration Management
+
+The API provides endpoints to manage agent configurations:
+
+1. Get Current Configuration
+
+```bash
+GET /config
+
+Response:
+{
+    "model": "gemini-2.5-flash",
+    "agents": {
+        "benchmark_agent": { ... },
+        "deal_notes_agent": { ... },
+        ...
+    }
+}
+```
+
+2. Update Configuration
+
+```bash
+PUT /config
+Content-Type: application/json
+
+Request Body: Updated configuration object
+Response: {"message": "Configuration updated successfully"}
+```
+
 ## Development
 
 - Add new agents in `agents/`.
 - Add tests in `tests/`.
 - Update documentation in `docs/`.
+- Modify agent configurations through the API endpoints
 
 ---
 

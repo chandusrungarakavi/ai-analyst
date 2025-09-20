@@ -1,8 +1,30 @@
 from fastapi import FastAPI, HTTPException
-import psycopg2
+import json
 import os
+from config_models import RootConfig
+from typing import Dict, Any
+import psycopg2
 
 app = FastAPI()
+
+
+def load_config() -> RootConfig:
+    """Load agent configurations from config.json file."""
+    config_path = os.path.join(os.path.dirname(__file__), "config.json")
+    try:
+        with open(config_path, "r") as f:
+            config_data = json.load(f)
+            return RootConfig(**config_data)
+    except FileNotFoundError:
+        raise HTTPException(status_code=500, detail="Configuration file not found")
+    except json.JSONDecodeError:
+        raise HTTPException(
+            status_code=500, detail="Invalid JSON in configuration file"
+        )
+    except ValueError as e:
+        raise HTTPException(
+            status_code=400, detail=f"Invalid configuration format: {str(e)}"
+        )
 
 
 # Database connection settings from environment variables
@@ -17,17 +39,19 @@ def get_db_connection():
     return conn
 
 
-@app.get("/fetch")
-def fetch_data():
+@app.get("/config", response_model=RootConfig)
+def get_config():
+    """Get the agent configuration."""
+    return load_config()
+
+
+@app.put("/config", response_model=Dict[str, str])
+async def update_config(config: RootConfig):
+    """Update the agent configuration."""
+    config_path = os.path.join(os.path.dirname(__file__), "config.json")
     try:
-        conn = get_db_connection()
-        cur = conn.cursor()
-        cur.execute(
-            "SELECT 1 AS result"
-        )  # Example query, replace with your table/query
-        row = cur.fetchone()
-        cur.close()
-        conn.close()
-        return {"result": row[0] if row else None}
+        with open(config_path, "w") as f:
+            json.dump(config.model_dump(), f, indent=4)
+        return {"message": "Configuration updated successfully"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
