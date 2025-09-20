@@ -25,6 +25,8 @@ services:
     environment:
       - PYTHONUNBUFFERED=1
       - LOG_LEVEL=INFO
+      - GOOGLE_GENAI_USE_VERTEXAI=FALSE
+      - GOOGLE_API_KEY=AIzaSyCx9tSSwBdnN-lCkeOi_1AsKKJwV9yfdBE
     restart: unless-stopped
 
   api-app:
