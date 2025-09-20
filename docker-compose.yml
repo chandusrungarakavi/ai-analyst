@@ -20,6 +20,7 @@ services:
     volumes:
       - ./agents:/app/agents:ro
       - ./requirements.txt:/app/requirements.txt:ro
+      - ./ai-analyst-for-startup-eval-40d9cd5e982e.json:/app/credentials.json:ro
     ports:
       - "8000:8000"
     environment:
@@ -27,6 +28,7 @@ services:
       - LOG_LEVEL=INFO
       - GOOGLE_GENAI_USE_VERTEXAI=FALSE
       - GOOGLE_API_KEY=AIzaSyCx9tSSwBdnN-lCkeOi_1AsKKJwV9yfdBE
+      - GOOGLE_APPLICATION_CREDENTIALS=/app/credentials.json
     restart: unless-stopped
 
   api-app:

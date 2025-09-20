@@ -3,6 +3,21 @@ import os
 from typing import Dict, Any
 from google.adk.agents.llm_agent import Agent, LlmAgent
 from google.adk.tools import AgentTool, google_search
+from google.adk.tools import FunctionTool
+from google.adk.agents.llm_agent import Agent
+from vertexai import rag
+import vertexai
+from google.adk.tools import FunctionTool
+
+
+RAG_LOCATION = "europe-west3"
+RAG_NAME = "startup-pitch-decks"
+RAG_ID = "4611686018427387904"
+PROJECT_ID = "ai-analyst-for-startup-eval"
+CORPUS_NAME = f"projects/{PROJECT_ID}/locations/{RAG_LOCATION}/ragCorpora/{RAG_ID}"
+
+
+vertexai.init(project=PROJECT_ID, location=RAG_LOCATION)
 
 
 def load_config() -> Dict[str, Any]:
@@ -18,10 +33,23 @@ def load_config() -> Dict[str, Any]:
 def get_tool_from_name(config: Dict[str, Any], tool_name: str) -> Any:
     """Get tool instance from tool name defined in config."""
     tools_map = {
-        "google_search": google_search
+        "google_search": google_search,
+        "query_rag_corpus": FunctionTool(query_rag_corpus),
         # Add more tool mappings here as needed
     }
     return tools_map.get(tool_name)
+
+
+def query_rag_corpus(query_text: str):
+    # Create the resource config
+    rag_resource = rag.RagResource(rag_corpus=CORPUS_NAME)
+
+    # Execute the query directly using the API
+    response = rag.retrieval_query(
+        rag_resources=[rag_resource],
+        text=query_text,
+    )
+    return response.text if hasattr(response, "text") else str(response)
 
 
 def create_agent_from_config(config: Dict[str, Any], name: str) -> Agent:
