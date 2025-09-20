@@ -1,42 +1,76 @@
+import json
+import os
+from typing import Dict, Any
 from google.adk.agents.llm_agent import Agent, LlmAgent
 from google.adk.tools import AgentTool, google_search
 
-# Sub-agent: Startup benchmarking
-benchmark_agent = Agent(
-    model="gemini-2.5-flash",
-    name="benchmark_agent",
-    description="Benchmarks startups against sector peers using financial multiples, hiring data, and traction signals.",
-    instruction="Given the startup, use Google Search to find relevant data and benchmark the startup against its sector peers. Provide a detailed report with financial multiples, hiring data, and traction signals. Flag potential risk indicators like inconsistent metrics, inflated market size, or unusual churn patterns.",
-    tools=[google_search],
-)
 
-# Sub-agent: Deal notes generation
-deal_notes_agent = Agent(
-    model="gemini-2.5-flash",
-    name="deal_notes_agent",
-    description="Ingests pitch decks, call transcripts, founder updates, and emails to generate structured deal notes.",
-    instruction=(
-        "Given a collection of documents (pitch decks, transcripts, etc.), analyze them and generate structured deal notes."
-    ),
-)
+def load_config() -> Dict[str, Any]:
+    """Load agent configurations from config.json file."""
+    config_path = os.path.join(os.path.dirname(__file__), "config.json")
+    try:
+        with open(config_path, "r") as f:
+            config = json.load(f)
+        return config
+    except FileNotFoundError:
+        raise FileNotFoundError(f"Configuration file not found at {config_path}")
+    except json.JSONDecodeError:
+        raise ValueError("Invalid JSON in configuration file")
 
 
-recommendation_agent = Agent(
-    model="gemini-2.5-flash",
-    name="recommendation_agent",
-    description="Summarizes growth potential and generates investor-ready recommendations tailored to customizable weightages.",
-    instruction="Based on the provided analysis and customizable weightages, summarize the startup's growth potential and generate investor-ready recommendations.",
-)
-# Wrap the specialized agents as tools
-benchmark_tool = AgentTool(agent=benchmark_agent)
-deal_notes_tool = AgentTool(agent=deal_notes_agent)
-recommendation_tool = AgentTool(agent=recommendation_agent)
+def get_tool_from_name(config: Dict[str, Any], tool_name: str) -> Any:
+    """Get tool instance from tool name defined in config."""
+    tools_map = {
+        "google_search": google_search
+        # Add more tool mappings here as needed
+    }
+    return tools_map.get(tool_name)
 
-# Root agent: Delegates to sub-agents
+
+def create_agent_from_config(config: Dict[str, Any], name: str) -> Agent:
+    """Create an agent instance from configuration."""
+    agent_config = config.get("agents", {}).get(name)
+    if not agent_config:
+        raise ValueError(f"Configuration for agent '{name}' not found")
+
+    # Get tools from configuration
+    tools = []
+    tool_names = agent_config.get("tools", [])
+    for tool_name in tool_names:
+        tool = get_tool_from_name(config, tool_name)
+        if tool:
+            tools.append(tool)
+
+    return Agent(
+        model=agent_config.get("model"),
+        name=agent_config.get("name"),
+        description=agent_config.get("description"),
+        instruction=agent_config.get("instruction"),
+        tools=tools,
+    )
+
+
+# Load configuration
+config = load_config()
+
+# Create sub-agents and their tools dynamically
+agents = {}
+agent_tools = {}
+
+# Create all agents except root agent
+for agent_name, agent_config in config.get("agents", {}).items():
+    if agent_name != "root_agent":
+        agents[agent_name] = create_agent_from_config(config, agent_name)
+        agent_tools[agent_name] = AgentTool(agent=agents[agent_name])
+
+# Get root agent configuration
+root_config = config.get("agents", {}).get("root_agent", {})
+
+# Create root agent with all tools
 root_agent = LlmAgent(
-    model="gemini-2.5-flash",
-    name="root_agent",
-    description="A root agent that delegates tasks to specialized sub-agents for deal note generation and startup benchmarking.",
-    instruction="Given a user request, determine whether to generate deal notes or benchmark a startup, then delegate to the appropriate sub-agent.",
-    tools=[deal_notes_tool, benchmark_tool, recommendation_tool],
+    model=root_config.get("model"),
+    name=root_config.get("name"),
+    description=root_config.get("description"),
+    instruction=root_config.get("instruction"),
+    tools=list(agent_tools.values()),
 )
