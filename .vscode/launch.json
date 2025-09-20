@@ -1,0 +1,89 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "API App",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/api_app/main.py",
+            "args": [],
+            "cwd": "${workspaceFolder}/api_app",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}",
+                "PORT": "8000",
+                "HOST": "localhost",
+                "POSTGRES_DB": "postgres",
+                "POSTGRES_USER": "postgres",
+                "POSTGRES_PASSWORD": "postgres",
+                "POSTGRES_HOST": "db",
+                "POSTGRES_PORT": "5432"
+            },
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
+        {
+            "name": "Root Agent",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/agents/root/root_agent.py",
+            "args": [],
+            "cwd": "${workspaceFolder}/agents",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}",
+                "API_URL": "http://localhost:8000",
+                "PYTHONUNBUFFERED": "1",
+                "LOG_LEVEL": "INFO",
+                "GOOGLE_GENAI_USE_VERTEXAI": "FALSE",
+                "GOOGLE_API_KEY": "AIzaSyCx9tSSwBdnN-lCkeOi_1AsKKJwV9yfdBE"
+            },
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
+        {
+            "name": "API App (with Uvicorn)",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "uvicorn",
+            "args": [
+                "api_app.main:app",
+                "--reload",
+                "--host",
+                "0.0.0.0",
+                "--port",
+                "8000"
+            ],
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}"
+            },
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
+        {
+            "name": "Debug Tests",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "pytest",
+            "args": [
+                "-v",
+                "--no-cov"
+            ],
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}",
+                "API_URL": "http://localhost:8000"
+            },
+            "console": "integratedTerminal",
+            "justMyCode": false
+        }
+    ],
+    "compounds": [
+        {
+            "name": "API + Root Agent",
+            "configurations": [
+                "API App",
+                "Root Agent"
+            ]
+        }
+    ]
+}
