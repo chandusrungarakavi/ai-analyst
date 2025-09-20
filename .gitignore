@@ -57,6 +57,7 @@ coverage.xml
 # pyenv
 .python-version
 
+.vscode/
 
 # mypy
 .mypy_cache/
