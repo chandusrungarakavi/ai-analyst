@@ -80,3 +80,4 @@ Icon?
 
 .venv/
 __pycache__
+k8s-manifests/
