@@ -80,3 +80,4 @@ Icon?
 ._*
 
 .venv/
+__pycache__
