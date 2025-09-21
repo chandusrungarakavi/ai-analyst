@@ -1,7 +1,8 @@
 {
     "model": "gemini-2.5-flash",
     "tools": {
-        "google_search": "google_search"
+        "google_search": "google_search",
+        "query_rag_corpus": "query_rag_corpus"
     },
     "agents": {
         "benchmark_agent": {
@@ -17,7 +18,10 @@
             "model": "gemini-2.5-flash",
             "name": "deal_notes_agent",
             "description": "Ingests pitch decks, call transcripts, founder updates, and emails to generate structured deal notes.",
-            "instruction": "Given a collection of documents (pitch decks, transcripts, etc.), analyze them and generate structured deal notes."
+            "instruction": "Given a collection of documents (pitch decks, transcripts, etc.), analyze them and generate structured deal notes.",
+            "tools": [
+                "query_rag_corpus"
+            ]
         },
         "recommendation_agent": {
             "model": "gemini-2.5-flash",

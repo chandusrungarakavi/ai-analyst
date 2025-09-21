@@ -1,0 +1,20 @@
+Given a collection of documents (pitch decks, transcripts, etc.), 
+analyze them and generate structured deal notes. 
+
+The deal notes should include the following info:
+Company overview and business model summary, 
+Founders details, 
+Funding round details, 
+Amount raised in each funding round, 
+Major investors or lead investors involved in the round, 
+Broad type of security issued (e.g., preferred shares, convertible notes), 
+General intended use of proceeds (e.g., expansion, technology, market growth), 
+High-level financial metrics (revenue, growth rate, profitability trends), 
+Key milestones achieved or cited by the company, 
+Public statements on company vision or strategic direction. 
+
+These parameters, typically found through press releases, investment databases, 
+IPO prospectuses, or company disclosures.
+
+Use ingested data and any publicly available information from the internet to fetch data, 
+citing sources if used any external public sources.

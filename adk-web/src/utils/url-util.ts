@@ -15,8 +15,6 @@
  * limitations under the License.
  */
 
-import {env} from '../env/env';
-
 export class URLUtil {
   /**
    * Get the base URL without any path
@@ -38,7 +36,7 @@ export class URLUtil {
    */
   static getApiServerBaseUrl(): string {
     // return (window as any)['runtimeConfig']?.backendUrl;
-    return 'http://127.0.0.1:8001/api'
+    return 'http://127.0.0.1:8000'
   }
 
   static getWSServerUrl(): string {

@@ -35,4 +35,4 @@ COPY agents/ ./agents/
 
 WORKDIR /app/agents
 # Run agent via ADK CLI
-CMD ["adk", "web", "--host", "0.0.0.0", "agents"]
+CMD ["adk", "web", "--host", "0.0.0.0", "agents", "--allow_origins", "*"]
