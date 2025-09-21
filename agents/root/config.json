@@ -1,39 +1,39 @@
 {
-    "model": "gemini-2.5-flash",
-    "tools": {
-        "google_search": "google_search",
-        "query_rag_corpus": "query_rag_corpus"
-    },
-    "agents": {
-        "benchmark_agent": {
-            "model": "gemini-2.5-flash",
-            "name": "benchmark_agent",
-            "description": "Benchmarks startups against sector peers using financial multiples, hiring data, and traction signals.",
-            "instruction": "Given the startup, use Google Search to find relevant data and benchmark the startup against its sector peers. Provide a detailed report with financial multiples, hiring data, and traction signals. Flag potential risk indicators like inconsistent metrics, inflated market size, or unusual churn patterns.",
-            "tools": [
-                "google_search"
-            ]
-        },
-        "deal_notes_agent": {
-            "model": "gemini-2.5-flash",
-            "name": "deal_notes_agent",
-            "description": "Ingests pitch decks, call transcripts, founder updates, and emails to generate structured deal notes.",
-            "instruction": "Given a collection of documents (pitch decks, transcripts, etc.), analyze them and generate structured deal notes.",
-            "tools": [
-                "query_rag_corpus"
-            ]
-        },
-        "recommendation_agent": {
-            "model": "gemini-2.5-flash",
-            "name": "recommendation_agent",
-            "description": "Summarizes growth potential and generates investor-ready recommendations tailored to customizable weightages.",
-            "instruction": "Based on the provided analysis and customizable weightages, summarize the startup's growth potential and generate investor-ready recommendations."
-        },
-        "root_agent": {
-            "model": "gemini-2.5-flash",
-            "name": "root_agent",
-            "description": "A root agent that delegates tasks to specialized sub-agents for deal note generation and startup benchmarking.",
-            "instruction": "Given a user request, determine whether to generate deal notes or benchmark a startup, then delegate to the appropriate sub-agent."
-        }
-    }
+	"model": "gemini-2.5-flash",
+	"tools": {
+		"google_search": "google_search",
+		"query_rag_corpus": "query_rag_corpus"
+	},
+	"agents": {
+		"root_agent": {
+			"model": "gemini-2.5-flash",
+			"name": "root_agent",
+			"description": "A root agent that delegates tasks to specialized sub-agents for deal note generation and startup benchmarking.",
+			"instruction": "Given a user request, determine whether to generate deal notes or benchmark a startup, then delegate to the appropriate sub-agent."
+		},
+		"deal_notes_agent": {
+			"model": "gemini-2.5-flash",
+			"name": "deal_notes_agent",
+			"description": "Searches ingested pitch decks, call transcripts, founder updates, and emails to generate structured deal notes.",
+			"instruction": "Given a collection of documents (pitch decks, transcripts, etc.), analyze them and generate structured deal notes including company overview and business model summary, founders details, funding round details, amount raised in each round, major or lead investors involved, broad security type issued (e.g., preferred shares, convertible notes), general intended use of proceeds (e.g., expansion, technology, market growth), high-level financial metrics (revenue, growth rate, profitability trends), key milestones achieved or cited, and public statements on company vision or strategic direction. Use ingested data and any publicly available information from the internet to fetch data, citing sources if used any external public sources.",
+			"tools": [
+				"query_rag_corpus"
+			]
+		},
+		"benchmark_agent": {
+			"model": "gemini-2.5-flash",
+			"name": "benchmark_agent",
+			"description": "Benchmarks startups against sector peers using financial multiples, hiring data, and traction signals.",
+			"instruction": "Given a startup, use Google Search to find relevant data and benchmark the startup against its sector peers. Provide a detailed report with financial multiples, hiring data, and traction signals. Flag potential risk indicators like inconsistent metrics, inflated market size, or unusual churn patterns. Include any news on the company to check the legality of the company and founders",
+			"tools": [
+				"google_search"
+			]
+		},
+		"recommendation_agent": {
+			"model": "gemini-2.5-flash",
+			"name": "recommendation_agent",
+			"description": "Summarizes growth potential and generates investor-ready recommendations tailored to customizable weightages.",
+			"instruction": "Based on the provided analysis and customizable weightages, summarize the startup's growth potential and suggest recommendations for the investor."
+		}
+	}
 }

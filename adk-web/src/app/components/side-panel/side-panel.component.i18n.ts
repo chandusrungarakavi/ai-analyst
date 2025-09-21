@@ -21,8 +21,9 @@ import {InjectionToken} from '@angular/core';
  * Default English messages for SidePanelComponent.
  */
 export const SIDE_PANEL_MESSAGES = {
-  agentDevelopmentKitLabel: 'Agent Development Kit',
+  agentDevelopmentKitLabel: 'Start-Up AI Analyst',
   collapsePanelTooltip: 'Collapse panel',
+  weightsTabLabel: 'Weights',
   traceTabLabel: 'Trace',
   eventsTabLabel: 'Events',
   stateTabLabel: 'State',

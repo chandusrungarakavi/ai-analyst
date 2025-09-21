@@ -221,6 +221,9 @@
         </button>
       }
       @if (appName != "") {
+        <app-agent-ui
+      (weightsChange)="updateWeights($event)"
+      ></app-agent-ui>
         <app-chat-panel
             [appName]="appName"
             [messages]="messages()"

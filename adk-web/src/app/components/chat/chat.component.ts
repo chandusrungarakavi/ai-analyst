@@ -75,6 +75,7 @@ import {StateTabComponent} from '../state-tab/state-tab.component';
 import {TraceEventComponent} from '../trace-tab/trace-event/trace-event.component';
 import {TraceTabComponent} from '../trace-tab/trace-tab.component';
 import {ViewImageDialogComponent} from '../view-image-dialog/view-image-dialog.component';
+import { AgentUiComponent } from "../agent-ui/agent-ui.component";
 
 const ROOT_AGENT = 'root_agent';
 
@@ -142,7 +143,8 @@ const BIDI_STREAMING_RESTART_WARNING =
     AsyncPipe,
     ChatPanelComponent,
     SidePanelComponent,
-  ],
+    AgentUiComponent
+],
 })
 export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
   chatPanel = viewChild.required(ChatPanelComponent);
@@ -167,6 +169,7 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
   latestThought: string = '';
   artifacts: any[] = [];
   userInput: string = '';
+  weights = '{"financial_data":25,"traction_signals":27,"market_opportunity":25,"team_quality":25}';
   userEditEvalCaseMessage: string = '';
   userId = 'user';
   appName = '';
@@ -410,6 +413,10 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
       });
   }
 
+  async updateWeights(event: Event) {
+    this.weights = JSON.stringify(event);
+  }
+
   async sendMessage(event: Event) {
     event.preventDefault();
     if (!this.userInput.trim() && this.selectedFiles.length <= 0) return;
@@ -424,7 +431,7 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
     // Add user message
     if (!!this.userInput.trim()) {
       this.messages.update(
-          messages => [...messages, {role: 'user', text: this.userInput}]);
+          messages => [...messages, {role: 'user', text: `${this.userInput}. Weights: ${this.weights}`}]);
     }
 
     // Add user message attachments

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -10,6 +10,9 @@ import { FormsModule } from '@angular/forms';
   imports:[CommonModule,FormsModule]
 })
 export class AgentUiComponent implements OnInit {
+
+  @Output() weightsChange = new EventEmitter<any>();
+
   agents: string[] = [];
   selectedAgent: string = '';
   userQuery: string = '';
@@ -37,14 +40,7 @@ export class AgentUiComponent implements OnInit {
     });
   }
 
-  submitQuery() {
-    const payload = {
-      agent: this.selectedAgent,
-      query: this.userQuery,
-      weights: this.weights
-    };
-    this.http.post('/api/agent-query', payload).subscribe(res => {
-      this.agentResponse = res;
-    });
+  onWeightChange() {
+    this.weightsChange.emit({ ...this.weights });
   }
 }
