@@ -1,23 +1,7 @@
 <div>
-  <h2>Select Agent</h2>
-  <select [(ngModel)]="selectedAgent">
-    <option *ngFor="let agent of agents" [value]="agent">{{ agent }}</option>
-  </select>
-
-  <h2>User Query</h2>
-  <input type="text" [(ngModel)]="userQuery" placeholder="Enter your query" />
-
-  <h3>Customize Weightings</h3>
   <div *ngFor="let key of weightKeys">
     <label>{{ keyLabels[key] }}</label>
-    <input type="range" min="0" max="100" [(ngModel)]="weights[key]" />
+    <input type="range" min="0" max="100" [(ngModel)]="weights[key]" (ngModelChange)="onWeightChange()"/>
     <span>{{ weights[key] }}%</span>
-  </div>
-
-  <button (click)="submitQuery()">Submit</button>
-
-  <div *ngIf="agentResponse">
-    <h3>Agent Response</h3>
-    <pre>{{ agentResponse | json }}</pre>
   </div>
 </div>
