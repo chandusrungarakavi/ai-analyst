@@ -34,5 +34,9 @@ COPY --from=builder /install /usr/local
 COPY agents/ ./agents/
 
 WORKDIR /app/agents
+
+EXPOSE 8080
 # Run agent via ADK CLI
-CMD ["adk", "web", "--host", "0.0.0.0", "agents", "--allow_origins", "*"]
+# CMD ["adk", "web", "--host", "0.0.0.0", "agents", "--allow_origins", "*"]
+CMD ["adk", "web", "--host", "0.0.0.0", "--port", "8080", "agents", "--allow_origins", "*"]
+
