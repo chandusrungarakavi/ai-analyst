@@ -16,6 +16,7 @@ services:
       context: .
       dockerfile: agents/Dockerfile
     container_name: ai-analyst-agent
+    image: asia-south1-docker.pkg.dev/ai-analyst-for-startup-eval/ai-analyst/ai-analyst-ai-analyst-agent:latest
     working_dir: /app
     volumes:
       - ./agents:/app/agents:ro
