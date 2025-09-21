@@ -1,6 +1,15 @@
 version: "3.8"
 
 services:
+  adk-web:
+    build:
+      context: .
+      dockerfile: adk-web/Dockerfile
+    container_name: adk-web
+    ports:
+      - "80:80"
+    # depends_on:
+    #   - api-app
   # dashboard:
   #   build:
   #     context: .
