@@ -1,7 +1,10 @@
-<div>
-  <div *ngFor="let key of weightKeys">
+
+<div class="agent-ui-container">
+  <div *ngFor="let key of weightKeys" class="weight-slider">
     <label>{{ keyLabels[key] }}</label>
-    <input type="range" min="0" max="100" [(ngModel)]="weights[key]" (ngModelChange)="onWeightChange()"/>
-    <span>{{ weights[key] }}%</span>
+    <div class="slider-container">
+      <input type="range" min="0" max="100" [(ngModel)]="weights[key]" (ngModelChange)="onWeightChange()"/>
+      <span>{{ weights[key] }}%</span>
+    </div>
   </div>
 </div>
