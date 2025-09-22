@@ -1,4 +1,3 @@
-
 <!--
  Copyright 2025 Google LLC
 
@@ -16,6 +15,24 @@
 -->
 
 <mat-drawer-container class="drawer-container" autosize>
+  @if (!showSidePanel && appName === "") {
+    <span
+      class="material-symbols-outlined"
+      style="
+        position: absolute;
+        width: 24px;
+        height: 24px;
+        color: #c4c7c5;
+        cursor: pointer;
+        margin-left: 20px;
+        margin-top: 20px;
+        z-index: 9999;
+      "
+      matTooltip="Open panel"
+      (click)="toggleSidePanel()"
+      >left_panel_open</span
+    >
+  }
   <mat-drawer class="side-drawer" #sideDrawer mode="side" appResizableDrawer>
     <div class="app-select-container">
       <mat-select
@@ -29,6 +46,9 @@
             <mat-option class="app-name-option" [value]="appName">{{ appName }}</mat-option>
           }
         }
+        @if (selectedAppControl.value && isLoadingApps()) {
+          <mat-option class="app-name-option" [value]="selectedAppControl.value">{{ selectedAppControl.value }}</mat-option>
+        }
       </mat-select>
     </div>
     <app-side-panel
@@ -36,42 +56,225 @@
       [appName]="appName"
       [userId]="userId"
       [sessionId]="sessionId"
+      [traceData]="traceData"
+      [eventData]="eventData"
+      [currentSessionState]="currentSessionState"
+      [artifacts]="artifacts"
+      [shouldShowEvalTab]="shouldShowEvalTab()"
+      [selectedEvent]="selectedEvent"
+      [selectedEventIndex]="selectedEventIndex"
+      [renderedEventGraph]="renderedEventGraph"
+      [rawSvgString]="rawSvgString"
+      [llmRequest]="llmRequest"
+      [llmResponse]="llmResponse"
+      (closePanel)="toggleSidePanel()"
+      (tabChange)="handleTabChange($event)"
+      (eventSelected)="selectEvent($event)"
       (sessionSelected)="updateWithSelectedSession($event)"
+      (sessionReloaded)="updateSessionState($event)"
+      (evalTabVisibilityChange)="handleShouldShowEvalTab($event)"
+      (evalCaseSelected)="updateWithSelectedEvalCase($event)"
+      (evalSetIdSelected)="updateSelectedEvalSetId($event)"
+      (returnToSession)="handleReturnToSession($event)"
+      (evalNotInstalled)="handleEvalNotInstalled($event)"
+      (page)="handlePageEvent($event)"
+      (closeSelectedEvent)="closeSelectedEvent()"
+      (openImageDialog)="openViewImageDialog($event)"
     >
     </app-side-panel>
-    <app-agent-ui
-      (weightsChange)="updateWeights($event)"
-    ></app-agent-ui>
   </mat-drawer>
   <div class="chat-container">
-    <div class="chat-toolbar">
-      <div class="toolbar-start">
-        <button mat-icon-button (click)="toggleSidePanel()">
-          <mat-icon>menu</mat-icon>
-        </button>
-        <span class="toolbar-title">{{ appName }}</span>
+    @if (appName != "") {
+      <div class="chat-toolbar" [ngClass]="{'edit-mode': isEvalEditMode()}">
+        @if (!showSidePanel) {
+          <span
+            class="material-symbols-outlined"
+            style="
+              width: 24px;
+              height: 24px;
+              color: #c4c7c5;
+              cursor: pointer;
+              margin-left: 20px;
+              margin-top: -2px;
+              z-index: 9999;
+            "
+            matTooltip="Open panel"
+            (click)="toggleSidePanel()"
+            >left_panel_open</span
+          >
+        }
+        @if (evalCase) {
+          <div style="display: flex">
+            <div class="toolbar-session-text">Eval Case ID</div>
+            <div class="toolbar-session-id">{{ evalCase.evalId }}</div>
+          </div>
+          <div class="toolbar-actions">
+            @if (this.isEvalEditMode()) {
+              <button mat-button (click)="cancelEditEvalCase()" style="height: 30px">Cancel</button>
+              <button
+                mat-flat-button
+                (click)="saveEvalCase()"
+                style="height: 30px"
+                [disabled]="!hasEvalCaseChanged() || isEvalCaseEditing()"
+              >
+                Save
+              </button>
+            } @else {
+              <span
+                class="material-symbols-outlined toolbar-icon"
+                matTooltip="Edit current eval case"
+                (click)="editEvalCase()"
+              >
+                edit
+              </span>
+              <span
+                class="material-symbols-outlined toolbar-icon"
+                matTooltip="Delete current eval case"
+                (click)="deleteEvalCase()"
+              >
+                delete
+              </span>
+            }
+          </div>
+        } @else {
+          <div style="display: flex">
+            <div class="toolbar-session-text">Session ID</div>
+            <div class="toolbar-session-id">{{ sessionId }}</div>
+          </div>
+          <div class="toolbar-actions">
+            <div class="toolbar-sse-toggle">
+              <mat-slide-toggle
+                class="example-margin"
+                [checked]="enableSseIndicator()"
+                (change)="toggleSse()"
+              >
+                Token Streaming
+              </mat-slide-toggle>
+            </div>
+            <mat-divider
+              [vertical]="true"
+              style="margin-left: 8px; margin-right: 8px; height: 22px"
+            ></mat-divider>
+            <div style="display: flex; align-items: center">
+              <div (click)="onNewSessionClick()" class="toolbar-new-sesison">
+                <mat-icon>add</mat-icon>
+                New Session
+              </div>
+              <span
+                class="material-symbols-outlined toolbar-icon"
+                matTooltip="Delete current session"
+                (click)="deleteSession(sessionId)"
+              >
+                delete
+              </span>
+              <span
+                class="material-symbols-outlined toolbar-icon"
+                matTooltip="Export current session"
+                (click)="exportSession()"
+              >
+                download
+              </span>
+              @if (importSessionEnabledObs | async) {
+                <span class="material-symbols-outlined toolbar-icon"
+                  matTooltip="Import session"
+                  (click)="importSession()" >
+                  upload
+                </span>
+              }
+            </div>
+          </div>
+        }
       </div>
-      <div class="toolbar-end">
-        <button mat-icon-button (click)="onNewSessionClick()">
-          <mat-icon>add</mat-icon>
-        </button>
-        <button mat-icon-button (click)="deleteSession(sessionId)">
-          <mat-icon>delete</mat-icon>
-        </button>
-      </div>
-    </div>
+    }
     <mat-card class="chat-card">
       @if (!selectedAppControl.value) {
-        <div class="empty-state-container">
-          <span>Welcome to ADK! Select an agent to begin.</span>
-        </div>
+        @if (isLoadingApps()) {
+          <div class="empty-state-container">
+            <span>Loading agents, please wait...</span>
+          </div>
+        } @else {
+          <div class="empty-state-container">
+            @if (((apps$ | async) || []).length > 0) {
+              <span
+                >Welcome to ADK!<br />
+                Select an agent on the left to begin with.</span
+              >
+            } @else {
+              <div>
+                Failed to load agents. To get started, run
+                <pre>adk web</pre>
+                in the folder that contains the agents.<br />
+                @if (loadingError()) {
+                  Error message: <br />
+                  <pre class="error">{{ loadingError() }}</pre>
+                } @else {
+                  <pre class="warning">Warning: No agents found in current folder.</pre>
+                }
+              </div>
+            }
+          </div>
+        }
       }
-      <app-chat-panel
-        [appName]="appName"
-        [messages]="messages()"
-        [(userInput)]="userInput"
-        (sendMessage)="sendMessage($event)"
-      ></app-chat-panel>
+      @if (longRunningEvents.length > 0) {
+        <button mat-fab color="primary" class="fab-button" (click)="openDialog()">
+          <mat-icon>priority_high</mat-icon>
+        </button>
+      }
+      @if (appName != "") {
+        <div>
+        <mat-slide-toggle [(ngModel)]="enableWeights">Enable Customizable Weights</mat-slide-toggle>
+        <app-agent-ui 
+        *ngIf="enableWeights" 
+        (weightsChange)="updateWeights($event)">
+      </app-agent-ui>
+      </div>
+        <app-chat-panel
+            [appName]="appName"
+            [messages]="messages()"
+            [isChatMode]="isChatMode()"
+            [evalCase]="evalCase"
+            [isEvalEditMode]="isEvalEditMode()"
+            [isEvalCaseEditing]="isEvalCaseEditing()"
+            [isEditFunctionArgsEnabled]="(isEditFunctionArgsEnabledObs | async) ?? false"
+            [(userInput)]="userInput"
+            [(userEditEvalCaseMessage)]="userEditEvalCaseMessage"
+            [selectedFiles]="selectedFiles"
+            [updatedSessionState]="updatedSessionState()"
+            [eventData]="eventData"
+            [MediaType]="MediaType"
+            [isAudioRecording]="isAudioRecording"
+            [isVideoRecording]="isVideoRecording"
+            [hoveredEventMessageIndices]="hoveredEventMessageIndices"
+            (clickEvent)="clickEvent($event)"
+            (handleKeydown)="handleKeydown($event.event, $event.message)"
+            (cancelEditMessage)="cancelEditMessage($event)"
+            (saveEditMessage)="saveEditMessage($event)"
+            (openViewImageDialog)="openViewImageDialog($event)"
+            (openBase64InNewTab)="openBase64InNewTab($event.data, $event.mimeType)"
+            (editEvalCaseMessage)="editEvalCaseMessage($event)"
+            (deleteEvalCaseMessage)="deleteEvalCaseMessage($event.message, $event.index)"
+            (editFunctionArgs)="editFunctionArgs($event)"
+            (fileSelect)="onFileSelect($event)"
+            (removeFile)="removeFile($event)"
+            (removeStateUpdate)="removeStateUpdate()"
+            (sendMessage)="sendMessage($event)"
+            (updateState)="updateState()"
+            (toggleAudioRecording)="toggleAudioRecording()"
+            (toggleVideoRecording)="toggleVideoRecording()"
+        ></app-chat-panel>
+      }
     </mat-card>
+
+    @if (bottomPanelVisible) {
+      <div #bottomPanel class="trace-detail-container" appResizableBottomPanel>
+        <div class="bottom-resize-handler"></div>
+        <app-trace-event
+          [userId]="userId"
+          [appName]="appName"
+          [sessionId]="sessionId"
+          (panelClosed)="closeTraceEventDetailPanel()"
+        ></app-trace-event>
+      </div>
+    }
   </div>
 </mat-drawer-container>
