@@ -169,6 +169,7 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
   latestThought: string = '';
   artifacts: any[] = [];
   userInput: string = '';
+  enableWeights = true;
   weights = '{"financial_data":25,"traction_signals":27,"market_opportunity":25,"team_quality":25}';
   userEditEvalCaseMessage: string = '';
   userId = 'user';
@@ -430,8 +431,13 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
 
     // Add user message
     if (!!this.userInput.trim()) {
+      const messageText = this.enableWeights
+        ? `${this.userInput}. Weights: ${this.weights}`
+        : `${this.userInput}`;
+
       this.messages.update(
-          messages => [...messages, {role: 'user', text: `${this.userInput}. Weights: ${this.weights}`}]);
+        messages => [...messages, { role: 'user', text: messageText }]
+      );
     }
 
     // Add user message attachments
