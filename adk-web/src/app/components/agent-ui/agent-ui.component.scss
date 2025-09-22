@@ -1,20 +1,61 @@
+/**
+ * Copyright 2025 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 :host {
-  display: block;
-  padding: 16px;
-  background-color: #f8f9fa;
-}
-
-.weight-slider {
-  margin-bottom: 16px;
-}
-
-label {
-  font-weight: 500;
-  margin-bottom: 8px;
-  display: block;
-}
-
-input[type="range"] {
-  width: 100%;
-}
+    display: block;
+    padding: 16px;
+    background-color: transparent; // Use transparent background
+    color: #e8eaed; // Light text color for dark theme
+  }
+  
+  .agent-ui-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .weight-slider {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  label {
+    font-weight: 500;
+    display: block;
+    width: 150px;
+    white-space: nowrap;
+    color: #e8eaed; // Ensure label is visible
+  }
+  
+  .slider-container {
+    display: flex;
+    align-items: center;
+    width: 100%;
+  }
+  
+  input[type="range"] {
+    width: 100%;
+    cursor: pointer;
+  }
+  
+  span {
+    margin-left: 10px;
+    min-width: 40px;
+    text-align: right;
+    color: #e8eaed; // Ensure percentage is visible
+  }
+  

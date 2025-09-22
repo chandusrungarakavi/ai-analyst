@@ -221,47 +221,50 @@
         </button>
       }
       @if (appName != "") {
-        <div>
-        <mat-slide-toggle [(ngModel)]="enableWeights">Enable Customizable Weights</mat-slide-toggle>
-        <app-agent-ui 
-        *ngIf="enableWeights" 
-        (weightsChange)="updateWeights($event)">
-      </app-agent-ui>
-      </div>
-        <app-chat-panel
-            [appName]="appName"
-            [messages]="messages()"
-            [isChatMode]="isChatMode()"
-            [evalCase]="evalCase"
-            [isEvalEditMode]="isEvalEditMode()"
-            [isEvalCaseEditing]="isEvalCaseEditing()"
-            [isEditFunctionArgsEnabled]="(isEditFunctionArgsEnabledObs | async) ?? false"
-            [(userInput)]="userInput"
-            [(userEditEvalCaseMessage)]="userEditEvalCaseMessage"
-            [selectedFiles]="selectedFiles"
-            [updatedSessionState]="updatedSessionState()"
-            [eventData]="eventData"
-            [MediaType]="MediaType"
-            [isAudioRecording]="isAudioRecording"
-            [isVideoRecording]="isVideoRecording"
-            [hoveredEventMessageIndices]="hoveredEventMessageIndices"
-            (clickEvent)="clickEvent($event)"
-            (handleKeydown)="handleKeydown($event.event, $event.message)"
-            (cancelEditMessage)="cancelEditMessage($event)"
-            (saveEditMessage)="saveEditMessage($event)"
-            (openViewImageDialog)="openViewImageDialog($event)"
-            (openBase64InNewTab)="openBase64InNewTab($event.data, $event.mimeType)"
-            (editEvalCaseMessage)="editEvalCaseMessage($event)"
-            (deleteEvalCaseMessage)="deleteEvalCaseMessage($event.message, $event.index)"
-            (editFunctionArgs)="editFunctionArgs($event)"
-            (fileSelect)="onFileSelect($event)"
-            (removeFile)="removeFile($event)"
-            (removeStateUpdate)="removeStateUpdate()"
-            (sendMessage)="sendMessage($event)"
-            (updateState)="updateState()"
-            (toggleAudioRecording)="toggleAudioRecording()"
-            (toggleVideoRecording)="toggleVideoRecording()"
-        ></app-chat-panel>
+        <div class="chat-area">
+          <div class="chat-messages">
+            <app-chat-panel
+              [appName]="appName"
+              [messages]="messages()"
+              [isChatMode]="isChatMode()"
+              [evalCase]="evalCase"
+              [isEvalEditMode]="isEvalEditMode()"
+              [isEvalCaseEditing]="isEvalCaseEditing()"
+              [isEditFunctionArgsEnabled]="(isEditFunctionArgsEnabledObs | async) ?? false"
+              [(userInput)]="userInput"
+              [(userEditEvalCaseMessage)]="userEditEvalCaseMessage"
+              [selectedFiles]="selectedFiles"
+              [updatedSessionState]="updatedSessionState()"
+              [eventData]="eventData"
+              [MediaType]="MediaType"
+              [isAudioRecording]="isAudioRecording"
+              [isVideoRecording]="isVideoRecording"
+              [hoveredEventMessageIndices]="hoveredEventMessageIndices"
+              (clickEvent)="clickEvent($event)"
+              (handleKeydown)="handleKeydown($event.event, $event.message)"
+              (cancelEditMessage)="cancelEditMessage($event)"
+              (saveEditMessage)="saveEditMessage($event)"
+              (openViewImageDialog)="openViewImageDialog($event)"
+              (openBase64InNewTab)="openBase64InNewTab($event.data, $event.mimeType)"
+              (editEvalCaseMessage)="editEvalCaseMessage($event)"
+              (deleteEvalCaseMessage)="deleteEvalCaseMessage($event.message, $event.index)"
+              (editFunctionArgs)="editFunctionArgs($event)"
+              (fileSelect)="onFileSelect($event)"
+              (removeFile)="removeFile($event)"
+              (removeStateUpdate)="removeStateUpdate()"
+              (sendMessage)="sendMessage($event)"
+              (updateState)="updateState()"
+              (toggleAudioRecording)="toggleAudioRecording()"
+              (toggleVideoRecording)="toggleVideoRecording()"
+            ></app-chat-panel>
+          </div>
+          <div class="chat-input-container">
+            <div class="weights-container">
+              <mat-slide-toggle [(ngModel)]="enableWeights">Enable Customizable Weights</mat-slide-toggle>
+              <app-agent-ui *ngIf="enableWeights" (weightsChange)="updateWeights($event)"></app-agent-ui>
+            </div>
+          </div>
+        </div>
       }
     </mat-card>
 
