@@ -39,8 +39,8 @@ services:
       - PORT=8080
       - PYTHONUNBUFFERED=1
       - LOG_LEVEL=INFO
-      - GOOGLE_GENAI_USE_VERTEXAI=FALSE
-      - GOOGLE_API_KEY=AIzaSyCx9tSSwBdnN-lCkeOi_1AsKKJwV9yfdBE
+      - GOOGLE_GENAI_USE_VERTEXAI=TRUE
+      - GOOGLE_API_KEY=XXXXXXX
       - GOOGLE_APPLICATION_CREDENTIALS=/app/credentials.json
     restart: unless-stopped
 #   api-app:
