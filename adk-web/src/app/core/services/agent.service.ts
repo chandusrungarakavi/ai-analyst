@@ -110,7 +110,7 @@ export class AgentService {
 
   listApps(): Observable<string[]> {
     if (this.apiServerDomain != undefined) {
-      const url = `http://127.0.0.1:8001/api/agents`;
+      const url = `http://127.0.0.1:8080/list-apps?relative_path=./`;
       return this.http.get<string[]>(url);
     }
     return new Observable<[]>();

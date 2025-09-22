@@ -36,7 +36,7 @@ export class URLUtil {
    */
   static getApiServerBaseUrl(): string {
     // return (window as any)['runtimeConfig']?.backendUrl;
-    return 'http://127.0.0.1:8000'
+    return 'http://127.0.0.1:8080'
   }
 
   static getWSServerUrl(): string {

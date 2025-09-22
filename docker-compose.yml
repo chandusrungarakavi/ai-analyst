@@ -1,15 +1,15 @@
 version: "3.8"
 
 services:
-  adk-web:
-    build:
-      context: ./adk-web
-      dockerfile: Dockerfile
-    image: asia-south1-docker.pkg.dev/ai-analyst-for-startup-eval/ai-analyst-ui/adk-web:latest
-    container_name: adk-web
-    ports:
-      - "8080:80"
-    restart: unless-stopped
+  # adk-web:
+  #   build:
+  #     context: ./adk-web
+  #     dockerfile: Dockerfile
+  #   image: asia-south1-docker.pkg.dev/ai-analyst-for-startup-eval/ai-analyst-ui/adk-web:latest
+  #   container_name: adk-web
+  #   ports:
+  #     - "8085:80"
+  #   restart: unless-stopped
     # depends_on:
     #   - api-app
   # dashboard:
@@ -40,7 +40,8 @@ services:
       - PYTHONUNBUFFERED=1
       - LOG_LEVEL=INFO
       - GOOGLE_GENAI_USE_VERTEXAI=TRUE
-      - GOOGLE_API_KEY=XXXXXXX
+      - GOOGLE_CLOUD_PROJECT=ai-analyst-for-startup-eval
+      - GOOGLE_CLOUD_LOCATION=europe-west3
       - GOOGLE_APPLICATION_CREDENTIALS=/app/credentials.json
     restart: unless-stopped
 #   api-app:
