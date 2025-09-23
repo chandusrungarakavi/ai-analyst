@@ -24,7 +24,7 @@
   @include mat.button-overrides(
     (
       filled-container-color: #89b4f8,
-      filled-label-text-color: black,
+      filled-label-text-color: white,
     )
   );
 
@@ -126,4 +126,5 @@
   font-weight: 500;
   line-height: 24px;
   letter-spacing: 0.1px;
+  color: white
 }
