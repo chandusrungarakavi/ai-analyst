@@ -17,45 +17,7 @@
 </div>
 @if (appName != "" && showSidePanel) {
   <div class="tabs-container">
-    <!-- <mat-tab-group (selectedTabChange)="tabChange.emit($event)">
-      <mat-tab class="tabs-header">
-        <ng-template mat-tab-label>
-          <span class="tab-label">{{ i18n.traceTabLabel }}</span>
-        </ng-template>
-        <app-trace-tab [traceData]="traceData"></app-trace-tab>
-      </mat-tab> -->
-
-      <mat-tab-group (selectedTabChange)="tabChange.emit($event)">
-      <!-- <mat-tab class="tabs-header">
-        <ng-template mat-tab-label>
-          <span class="tab-label">{{ i18n.weightsTabLabel }}</span>
-        </ng-template>
-        <app-agent-ui></app-agent-ui>
-        <app-trace-tab [traceData]="traceData"></app-trace-tab>
-      </mat-tab> -->
-
-      <!-- <mat-tab class="tabs-header"> -->
-        <!-- <ng-template mat-tab-label>
-          <span class="tab-label">{{ i18n.eventsTabLabel }}</span>
-        </ng-template>
-        <app-event-tab
-          [eventsMap]="eventData"
-          [traceData]="traceData"
-          (selectedEvent)="eventSelected.emit($event)"
-        ></app-event-tab>
-      </mat-tab>
-      <mat-tab>
-        <ng-template mat-tab-label>
-          <span class="tab-label">{{ i18n.stateTabLabel }}</span>
-        </ng-template>
-        <app-state-tab [sessionState]="currentSessionState"></app-state-tab>
-      </mat-tab>
-      <mat-tab>
-        <ng-template mat-tab-label>
-          <span class="tab-label">{{ i18n.artifactsTabLabel }}</span>
-        </ng-template>
-        <app-artifact-tab [artifacts]="artifacts"> </app-artifact-tab>
-      </mat-tab> -->
+    <mat-tab-group (selectedTabChange)="tabChange.emit($event)">
       <mat-tab>
         <ng-template mat-tab-label>
           <span class="tab-label">{{ i18n.sessionsTabLabel }}</span>
@@ -68,6 +30,12 @@
           (sessionReloaded)="sessionReloaded.emit($event)"
         >
         </app-session-tab>
+      </mat-tab>
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <span class="tab-label">Weights</span>
+        </ng-template>
+        <app-metrics-panel (metricsChanged)="metricsChanged.emit($event)"></app-metrics-panel>
       </mat-tab>
       @if (shouldShowEvalTab) {
         <mat-tab>
