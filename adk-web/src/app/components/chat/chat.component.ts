@@ -76,6 +76,7 @@ import {TraceEventComponent} from '../trace-tab/trace-event/trace-event.componen
 import {TraceTabComponent} from '../trace-tab/trace-tab.component';
 import {ViewImageDialogComponent} from '../view-image-dialog/view-image-dialog.component';
 import { AgentUiComponent } from "../agent-ui/agent-ui.component";
+import { CommonModule } from '@angular/common';
 
 const ROOT_AGENT = 'root_agent';
 
@@ -143,7 +144,8 @@ const BIDI_STREAMING_RESTART_WARNING =
     AsyncPipe,
     ChatPanelComponent,
     SidePanelComponent,
-    AgentUiComponent
+    AgentUiComponent,
+    CommonModule
 ],
 })
 export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {

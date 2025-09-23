@@ -120,14 +120,21 @@
 }
 
 .message-textarea {
-  background-color: #303030;
+  background-color: #fff;         // White background for contrast
+  color: #000;                    // Black text color
   max-width: 100%;
-  border: none;
+  width: 100%;                    // Make it fill the container
+  min-height: 60px;               // Increase height as needed
+  font-size: 18px;                // Larger font size
+  border: 1px solid #ced4da;
+  border-radius: 10px;
+  padding: 12px 18px;
   font-family: 'Google Sans', 'Helvetica Neue', sans-serif;
+  resize: vertical;   
 }
 
 .message-textarea:focus {
-  background-color: #131314;
+  background-color: #fff;
   outline: none;
 }
 
@@ -231,8 +238,11 @@
 
 .side-drawer {
   background-color: #1b1b1b;
-  color: white;
+  color: black;
   border-radius: 0;
+  width: 280px;
+  min-width: 200px;
+  max-width: 320px;
 }
 
 .file-preview {
