@@ -8,13 +8,9 @@ import { SafeHtml } from '@angular/platform-browser';
 import { NgxJsonViewerModule } from 'ngx-json-viewer';
 import { EvalCase } from '../../core/models/Eval';
 import { Session } from '../../core/models/Session';
-import { ArtifactTabComponent } from '../artifact-tab/artifact-tab.component';
 import { EvalTabComponent } from '../eval-tab/eval-tab.component';
 import { EventTabComponent } from '../event-tab/event-tab.component';
 import { SessionTabComponent } from '../session-tab/session-tab.component';
-import { StateTabComponent } from '../state-tab/state-tab.component';
-import { TraceTabComponent } from '../trace-tab/trace-tab.component';
-import { MetricsPanelComponent } from '../metrics-panel/metrics-panel.component';
 import { SidePanelMessagesInjectionToken } from './side-panel.component.i18n';
 
 @Component({
@@ -27,17 +23,12 @@ import { SidePanelMessagesInjectionToken } from './side-panel.component.i18n';
     MatTabGroup,
     MatTab,
     MatTabLabel,
-    TraceTabComponent,
-    EventTabComponent,
-    StateTabComponent,
-    ArtifactTabComponent,
     SessionTabComponent,
     EvalTabComponent,
     MatPaginator,
     MatMiniFabButton,
     MatIcon,
-    NgxJsonViewerModule,
-    MetricsPanelComponent
+    NgxJsonViewerModule
   ],
 })
 export class SidePanelComponent {

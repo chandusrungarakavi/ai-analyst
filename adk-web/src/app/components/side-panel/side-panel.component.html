@@ -31,12 +31,6 @@
         >
         </app-session-tab>
       </mat-tab>
-      <mat-tab>
-        <ng-template mat-tab-label>
-          <span class="tab-label">Weights</span>
-        </ng-template>
-        <app-metrics-panel (metricsChanged)="metricsChanged.emit($event)"></app-metrics-panel>
-      </mat-tab>
       @if (shouldShowEvalTab) {
         <mat-tab>
           <ng-template mat-tab-label>
