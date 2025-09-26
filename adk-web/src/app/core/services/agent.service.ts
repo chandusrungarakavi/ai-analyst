@@ -15,104 +15,104 @@
  * limitations under the License.
  */
 
-import {HttpClient} from '@angular/common/http';
-import {Injectable, NgZone, InjectionToken} from '@angular/core';
-import {BehaviorSubject, Observable, of} from 'rxjs';
-import {URLUtil} from '../../../utils/url-util';
-import {AgentRunRequest} from '../models/AgentRunRequest';
+import { HttpClient } from '@angular/common/http';
+import { Injectable, NgZone, InjectionToken } from '@angular/core';
+import { BehaviorSubject, Observable, of } from 'rxjs';
+import { URLUtil } from '../../../utils/url-util';
+import { AgentRunRequest } from '../models/AgentRunRequest';
 
 export const AGENT_SERVICE = new InjectionToken<AgentService>('AgentService');
 
 @Injectable({
-  providedIn: 'root',
+	providedIn: 'root',
 })
 export class AgentService {
-  apiServerDomain = URLUtil.getApiServerBaseUrl();
-  private _currentApp = new BehaviorSubject<string>('');
-  currentApp = this._currentApp.asObservable();
-  private isLoading = new BehaviorSubject<boolean>(false);
+	apiServerDomain = URLUtil.getApiServerBaseUrl();
+	private _currentApp = new BehaviorSubject<string>('');
+	currentApp = this._currentApp.asObservable();
+	private isLoading = new BehaviorSubject<boolean>(false);
 
-  constructor(
-    private http: HttpClient,
-    private zone: NgZone,
-  ) {}
+	constructor(
+		private http: HttpClient,
+		private zone: NgZone,
+	) { }
 
-  getApp(): Observable<string> {
-    return this.currentApp;
-  }
+	getApp(): Observable<string> {
+		return this.currentApp;
+	}
 
-  setApp(name: string) {
-    this._currentApp.next(name);
-  }
+	setApp(name: string) {
+		this._currentApp.next(name);
+	}
 
-  getLoadingState(): BehaviorSubject<boolean> {
-    return this.isLoading;
-  }
+	getLoadingState(): BehaviorSubject<boolean> {
+		return this.isLoading;
+	}
 
-  runSse(req: AgentRunRequest) {
-    const url = this.apiServerDomain + `/run_sse`;
-    this.isLoading.next(true);
-    return new Observable<string>((observer) => {
-      const self = this;
-      fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'text/event-stream',
-        },
-        body: JSON.stringify(req),
-      })
-        .then((response) => {
-          const reader = response.body?.getReader();
-          const decoder = new TextDecoder('utf-8');
-          let lastData = '';
+	runSse(req: AgentRunRequest) {
+		const url = this.apiServerDomain + `/run_sse`;
+		this.isLoading.next(true);
+		return new Observable<string>((observer) => {
+			const self = this;
+			fetch(url, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					'Accept': 'text/event-stream',
+				},
+				body: JSON.stringify(req),
+			})
+				.then((response) => {
+					const reader = response.body?.getReader();
+					const decoder = new TextDecoder('utf-8');
+					let lastData = '';
 
-          const read = () => {
-            reader?.read()
-                .then(({done, value}) => {
-                  this.isLoading.next(true);
-                  if (done) {
-                    this.isLoading.next(false);
-                    return observer.complete();
-                  }
-                  const chunk = decoder.decode(value, {stream: true});
-                  lastData += chunk;
-                  try {
-                    const lines = lastData.split(/\r?\n/).filter(
-                        (line) => line.startsWith('data:'));
-                    lines.forEach((line) => {
-                      const data = line.replace(/^data:\s*/, '');
-                      JSON.parse(data);
-                      self.zone.run(() => observer.next(data));
-                    });
-                    lastData = '';
-                  } catch (e) {
-                    // the data is not a valid json, it could be an incomplete
-                    // chunk. we ignore it and wait for the next chunk.
-                    if (e instanceof SyntaxError) {
-                      read();
-                    }
-                  }
-                  read();  // Read the next chunk
-                })
-                .catch((err) => {
-                  self.zone.run(() => observer.error(err));
-                });
-          };
+					const read = () => {
+						reader?.read()
+							.then(({ done, value }) => {
+								this.isLoading.next(true);
+								if (done) {
+									this.isLoading.next(false);
+									return observer.complete();
+								}
+								const chunk = decoder.decode(value, { stream: true });
+								lastData += chunk;
+								try {
+									const lines = lastData.split(/\r?\n/).filter(
+										(line) => line.startsWith('data:'));
+									lines.forEach((line) => {
+										const data = line.replace(/^data:\s*/, '');
+										JSON.parse(data);
+										self.zone.run(() => observer.next(data));
+									});
+									lastData = '';
+								} catch (e) {
+									// the data is not a valid json, it could be an incomplete
+									// chunk. we ignore it and wait for the next chunk.
+									if (e instanceof SyntaxError) {
+										read();
+									}
+								}
+								read();  // Read the next chunk
+							})
+							.catch((err) => {
+								self.zone.run(() => observer.error(err));
+							});
+					};
 
-          read();
-        })
-        .catch((err) => {
-          self.zone.run(() => observer.error(err));
-        });
-    });
-  }
+					read();
+				})
+				.catch((err) => {
+					self.zone.run(() => observer.error(err));
+				});
+		});
+	}
 
-  listApps(): Observable<string[]> {
-    if (this.apiServerDomain != undefined) {
-      const url = `https://ai-analyst-agent-605332986223.europe-west3.run.app/list-apps?relative_path=./`;
-      return this.http.get<string[]>(url);
-    }
-    return new Observable<[]>();
-  }
+	listApps(): Observable<string[]> {
+		if (this.apiServerDomain != undefined) {
+			const url = `https://ai-analyst-agent-605332986223.asia-south1.run.app/list-apps?relative_path=./`;
+			return this.http.get<string[]>(url);
+		}
+		return new Observable<[]>();
+	}
 }
