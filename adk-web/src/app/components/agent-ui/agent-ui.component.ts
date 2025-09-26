@@ -4,34 +4,34 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 @Component({
-  selector: 'app-agent-ui',
-  templateUrl: './agent-ui.component.html',
-  styleUrls: ['./agent-ui.component.scss'],
-  imports:[CommonModule,FormsModule]
+	selector: 'app-agent-ui',
+	templateUrl: './agent-ui.component.html',
+	styleUrls: ['./agent-ui.component.scss'],
+	imports: [CommonModule, FormsModule]
 })
 export class AgentUiComponent implements OnInit {
 
-  @Output() weightsChange = new EventEmitter<any>();
+	@Output() weightsChange = new EventEmitter<any>();
 
-  agents: string[] = [];
-  selectedAgent: string = '';
-  userQuery: string = '';
-  weights: any = {
-    financial_data: 25,
-    traction_signals: 25,
-    market_opportunity: 25,
-    team_quality: 25
-  };
-  weightKeys = ['financial_data', 'traction_signals', 'market_opportunity', 'team_quality'];
-  keyLabels: any = {
-    financial_data: 'Financial Data',
-    traction_signals: 'Traction Signals',
-    market_opportunity: 'Market Opportunity',
-    team_quality: 'Team Quality'
-  };
-  agentResponse: any = null;
+	agents: string[] = [];
+	selectedAgent: string = '';
+	userQuery: string = '';
+	weights: any = {
+		market_potential: 25,
+		finance_performance: 25,
+		team_and_execution: 25,
+		scalability_and_technology: 25
+	};
+	weightKeys = ['market_potential', 'finance_performance', 'team_and_execution', 'scalability_and_technology'];
+	keyLabels: any = {
+		market_potential: 'Market Potential',
+		finance_performance: 'Finance Performance',
+		team_and_execution: 'Team & Execution',
+		scalability_and_technology: 'Scalability & Technology'
+	};
+	agentResponse: any = null;
 
-  constructor(private http: HttpClient) {}
+	constructor(private http: HttpClient) { }
 
   ngOnInit() {
     this.http.get<string[]>('https://ai-analyst-agent-605332986223.europe-west3.run.app/list-apps?relative_path=./').subscribe(data => {
@@ -40,7 +40,7 @@ export class AgentUiComponent implements OnInit {
     });
   }
 
-  onWeightChange() {
-    this.weightsChange.emit({ ...this.weights });
-  }
+	onWeightChange() {
+		this.weightsChange.emit({ ...this.weights });
+	}
 }
