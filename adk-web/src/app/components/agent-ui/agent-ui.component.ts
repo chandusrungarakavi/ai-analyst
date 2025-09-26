@@ -33,12 +33,12 @@ export class AgentUiComponent implements OnInit {
 
 	constructor(private http: HttpClient) { }
 
-	ngOnInit() {
-		this.http.get<string[]>('http://127.0.0.1:8080/list-apps?relative_path=./').subscribe(data => {
-			this.agents = data;
-			if (this.agents.length) this.selectedAgent = this.agents[0];
-		});
-	}
+  ngOnInit() {
+    this.http.get<string[]>('https://ai-analyst-agent-605332986223.europe-west3.run.app/list-apps?relative_path=./').subscribe(data => {
+      this.agents = data;
+      if (this.agents.length) this.selectedAgent = this.agents[0];
+    });
+  }
 
 	onWeightChange() {
 		this.weightsChange.emit({ ...this.weights });

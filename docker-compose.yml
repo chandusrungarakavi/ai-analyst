@@ -10,8 +10,8 @@ services:
   #   ports:
   #     - "8085:80"
   #   restart: unless-stopped
-    # depends_on:
-    #   - api-app
+  # depends_on:
+  #   - api-app
   # dashboard:
   #   build:
   #     context: .
@@ -44,6 +44,7 @@ services:
       - GOOGLE_CLOUD_LOCATION=europe-west3
       - GOOGLE_APPLICATION_CREDENTIALS=/app/credentials.json
     restart: unless-stopped
+    command: CMD ["adk", "web", "--host", "0.0.0.0", "--port", "8080", "agents" ,"--allow_origins", "*"]
 #   api-app:
 #     build:
 #       context: .
