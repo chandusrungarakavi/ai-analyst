@@ -18,15 +18,6 @@ chmod +x push-adk-web.sh
 chmod +x push-ai-agent.sh
 ```
 
-### Making Scripts Executable
-
-Before running the deployment scripts, make them executable:
-
-```bash
-chmod +x push-adk-web.sh
-chmod +x push-ai-agent.sh
-```
-
 ### Deploying Components
 
 1. **Deploy Web Interface**

@@ -55,19 +55,25 @@ if ! echo "$TOKEN" | docker login -u oauth2accesstoken --password-stdin "https:/
     exit 1
 fi
 
-echo -e "\n${CYAN}[Step 5] Building Docker image using docker-compose...${NC}"
-if ! docker-compose build "$SERVICE_NAME"; then
-    echo -e "\n${RED}[Error] Docker build failed.${NC}"
+echo -e "\n${CYAN}[Step 5] Building and pushing multi-architecture image using docker buildx bake...${NC}"
+if ! docker buildx version &> /dev/null; then
+    echo -e "\n${YELLOW}[Warn] docker buildx not found. Creating a builder instance...${NC}"
+    if ! docker buildx create --use --name mybuilder; then
+        echo -e "\n${RED}[Error] Failed to create docker buildx builder.${NC}"
+        exit 1
+    fi
+fi
+
+if ! docker buildx bake $SERVICE_NAME --push; then
+    echo -e "\n${RED}[Error] Docker bake failed to build and push image.${NC}"
     exit 1
 fi
 
-echo -e "\n${CYAN}[Step 6] Pushing image to Artifact Registry...${NC}"
-if docker push "$IMAGE_TAG"; then
-    echo -e "\n${GREEN}[Success] Image pushed successfully to Artifact Registry!${NC}"
-else
-    echo -e "\n${RED}[Error] Docker push failed.${NC}"
-    exit 1
-fi
+echo -e "\n${GREEN}[Success] Multi-architecture image pushed successfully to Artifact Registry!${NC}"
 
-echo -e "\n${CYAN}[Step 7] Listing image tags...${NC}"
+echo -e "\n${CYAN}[Step 6] Listing image tags...${NC}"
 gcloud artifacts docker tags list asia-south1-docker.pkg.dev/ai-analyst-for-startup-eval/ai-analyst/ai-analyst-ai-analyst-agent
+
+# Optional: Cleanup builder instance
+# echo -e "\n${CYAN}[Step 7] Removing temporary buildx builder...${NC}"
+# docker buildx rm mybuilder

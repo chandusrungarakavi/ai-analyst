@@ -1,91 +1,43 @@
 version: "3.8"
 
 services:
-  adk-web:
-    build:
-      context: ./adk-web
-      dockerfile: Dockerfile
-    image: asia-south1-docker.pkg.dev/ai-analyst-for-startup-eval/ai-analyst-ui/adk-web:latest
-    container_name: adk-web
-    ports:
-      - "8085:80"
-    restart: unless-stopped
-  # depends_on:
-  #   - api-app
-  # dashboard:
-  #   build:
-  #     context: .
-  #     dockerfile: apps/dashboard/Dockerfile
-  #   container_name: angular-dashboard
-  #   ports:
-  #     - "4200:80"
-  #   depends_on:
-  #     - api-app
-
-  ai-analyst-agent:
-    build:
-      context: .
-      dockerfile: agents/Dockerfile
-    container_name: ai-analyst-agent
-    image: asia-south1-docker.pkg.dev/ai-analyst-for-startup-eval/ai-analyst/ai-analyst-ai-analyst-agent:latest
-    working_dir: /app
-    volumes:
-      - ./agents:/app/agents:ro
-      - ./requirements.txt:/app/requirements.txt:ro
-      - ./ai-analyst-for-startup-eval-40d9cd5e982e.json:/app/credentials.json:ro
-    ports:
-      - "8080:8080"
-    environment:
-      - PORT=8080
-      - PYTHONUNBUFFERED=1
-      - LOG_LEVEL=INFO
-      - GOOGLE_GENAI_USE_VERTEXAI=TRUE
-      - GOOGLE_CLOUD_PROJECT=ai-analyst-for-startup-eval
-      - GOOGLE_CLOUD_LOCATION=europe-west3
-      - GOOGLE_APPLICATION_CREDENTIALS=/app/credentials.json
-    restart: unless-stopped
-    command: CMD ["adk", "web", "--host", "0.0.0.0", "--port", "8080", "agents" ,"--allow_origins", "*"]
-#   api-app:
-#     build:
-#       context: .
-#       dockerfile: api_app/Dockerfile
-#     container_name: api-app
-#     environment:
-#       - POSTGRES_DB=postgres
-#       - POSTGRES_USER=postgres
-#       - POSTGRES_PASSWORD=postgres
-#       - POSTGRES_HOST=db
-#       - POSTGRES_PORT=5432
-#     ports:
-#       - "8001:8000"
-#     depends_on:
-#       - db
-#     volumes:
-#       - ./api_app:/app:ro
-
-#   db:
-#     image: postgres:15
-#     container_name: postgres-db
-#     environment:
-#       - POSTGRES_DB=postgres
-#       - POSTGRES_USER=postgres
-#       - POSTGRES_PASSWORD=postgres
-#     ports:
-#       - "5432:5432"
-#     volumes:
-#       - pgdata:/var/lib/postgresql/data
-
-#   pgadmin:
-#     image: dpage/pgadmin4
-#     container_name: pgadmin
-#     environment:
-#       - PGADMIN_DEFAULT_EMAIL=admin@admin.com
-#       - PGADMIN_DEFAULT_PASSWORD=admin
-#     ports:
-#       - "5050:80"
-#     depends_on:
-#       - db
-#     restart: unless-stopped
-
-# volumes:
-#   pgdata:
+    adk-web:
+        build:
+            context: ./adk-web
+            dockerfile: Dockerfile
+            x-bake:
+                platforms:
+                    - linux/amd64
+                    - linux/arm64
+        image: asia-south1-docker.pkg.dev/ai-analyst-for-startup-eval/ai-analyst-ui/adk-web:latest
+        container_name: adk-web
+        ports:
+            - "8085:80"
+        restart: unless-stopped
+    ai-analyst-agent:
+        build:
+            context: .
+            dockerfile: agents/Dockerfile
+            x-bake:
+                platforms:
+                    - linux/amd64
+                    - linux/arm64
+        container_name: ai-analyst-agent
+        image: asia-south1-docker.pkg.dev/ai-analyst-for-startup-eval/ai-analyst/ai-analyst-ai-analyst-agent:latest
+        working_dir: /app
+        volumes:
+            - ./agents:/app/agents:ro
+            - ./requirements.txt:/app/requirements.txt:ro
+            - ./ai-analyst-for-startup-eval-40d9cd5e982e.json:/app/credentials.json:ro
+        ports:
+            - "8080:8080"
+        environment:
+            - PORT=8080
+            - PYTHONUNBUFFERED=1
+            - LOG_LEVEL=INFO
+            - GOOGLE_GENAI_USE_VERTEXAI=TRUE
+            - GOOGLE_CLOUD_PROJECT=ai-analyst-for-startup-eval
+            - GOOGLE_CLOUD_LOCATION=europe-west3
+            - GOOGLE_APPLICATION_CREDENTIALS=/app/credentials.json
+        restart: unless-stopped
+        command: CMD ["adk", "web", "--host", "0.0.0.0", "--port", "8080", "agents", "--allow_origins", "*"]

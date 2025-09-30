@@ -63,21 +63,25 @@ if ($process.ExitCode -ne 0) {
     exit 1
 }
 
-Write-Host "`n[Step 5] Building Docker image using docker-compose..." -ForegroundColor Cyan
-docker-compose build $serviceName
-if ($LASTEXITCODE -ne 0) {
-    Write-Host "`n[Error] Docker build failed." -ForegroundColor Red
+Write-Host "`n[Step 5] Building and pushing multi-architecture image using docker buildx bake..." -ForegroundColor Cyan
+
+docker buildx version 2>$null
+if (-not $?) {
+	Write-Host "`n[Info] docker buildx not found. Creating a builder instance..." --ForegroundColor Yellow
+	$createBuilder = docker buildx create --use --name mybuilder
+	if (-not $createBuilder) {
+		Write-Host "`n[Error] Failed to create docker buildx builder." --ForegroundColor Red
+		exit 1
+	}
+}
+
+docker buildx bake $serviceName --push
+if (-not $?) {
+    Write-Host "`n[Error] Docker bake failed to build and push image." -ForegroundColor Red
     exit 1
 }
 
-Write-Host "`n[Step 6] Pushing image to Artifact Registry..." -ForegroundColor Cyan
-docker push $imageTag
-if ($LASTEXITCODE -eq 0) {
-    Write-Host "`n[Success] Image pushed successfully to Artifact Registry!" -ForegroundColor Green
-} else {
-    Write-Host "`n[Error] Docker push failed." -ForegroundColor Red
-    exit 1
-}
+Write-Host "`n[Success] Multi-architecture image pushed successfully to Artifact Registry!" -ForegroundColor Green
 
-Write-Host "`n[Step 7] Listing image tags..." -ForegroundColor Cyan
+Write-Host "`n[Step 6] Listing image tags..." -ForegroundColor Cyan
 gcloud artifacts docker tags list asia-south1-docker.pkg.dev/ai-analyst-for-startup-eval/ai-analyst-ui/adk-web
